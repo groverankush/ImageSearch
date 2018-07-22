@@ -1,0 +1,38 @@
+<resources>
+
+
+    <!-- Margins -->
+    <dimen name="one_dp">1dp</dimen>
+    <dimen name="margin_mini">2dp</dimen>
+    <dimen name="margin_micro">4dp</dimen>
+    <dimen name="margin_normal">6dp</dimen>
+    <dimen name="margin_xsmall">8dp</dimen>
+    <dimen name="margin_xsmalls">10dp</dimen>
+    <dimen name="margin_small">12dp</dimen>
+    <dimen name="margin_smallx">14dp</dimen>
+    <dimen name="margin_medium">16dp</dimen>
+    <dimen name="margin_large">18dp</dimen>
+    <dimen name="margin_largex">20dp</dimen>
+    <dimen name="margin_xlarge">24dp</dimen>
+    <dimen name="margin_xxlarge">28dp</dimen>
+    <dimen name="margin_xxxlarge">36dp</dimen>
+    <dimen name="margin_xxxlargex">50dp</dimen>
+
+    <!-- Text Size -->
+
+    <dimen name="text_size_small_1">12sp</dimen>
+    <dimen name="text_size_small_2">14sp</dimen>
+    <dimen name="text_size_small_3">16sp</dimen>
+    <dimen name="text_size_normal_1">16sp</dimen>
+    <dimen name="text_size_normal_2">18sp</dimen>
+    <dimen name="text_size_normal_3">20sp</dimen>
+    <dimen name="text_size_large_1">22sp</dimen>
+    <dimen name="text_size_large_2">24sp</dimen>
+    <dimen name="text_size_large_3">28sp</dimen>
+    <dimen name="text_size_large_4">30sp</dimen>
+    <dimen name="text_size_xlarge_1">42sp</dimen>
+
+
+
+
+</resources>
