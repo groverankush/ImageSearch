@@ -1,6 +1,22 @@
 package com.ankushgrover.imagesearch.data.source.remote;
 
+import com.ankushgrover.imagesearch.data.model.photo.PhotoResult;
+
+import io.reactivex.Single;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
+import retrofit2.http.Url;
+
 public interface PhotosDataSource {
+
+
+
+    @GET("?method=flickr.photos.search&format=json&jsoncallback=1")
+    Single<PhotoResult> fetchPhotos(@Query("api_key") String apiKey,
+                                    @Query("text") String searchTerm,
+                                    @Query("page") int page);
+
 
     //https://api.flickr.com/services
     

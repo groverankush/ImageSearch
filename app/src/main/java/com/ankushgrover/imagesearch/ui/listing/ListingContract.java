@@ -10,7 +10,7 @@ public interface ListingContract {
 
     interface View extends BaseView {
 
-        void images();
+        void imagesAdded();
 
         boolean fetchMoreMovies();
 

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ImageSearch</string>
+    <string name="no_images">No images to show!</string>
+    <string name="general_error">Something went wrong!</string>
 </resources>

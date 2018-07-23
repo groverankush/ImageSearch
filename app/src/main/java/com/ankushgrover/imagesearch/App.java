@@ -1,11 +1,12 @@
 package com.ankushgrover.imagesearch;
 
 import android.app.Application;
+import android.arch.persistence.room.Room;
 
 import com.ankushgrover.imagesearch.data.source.local.AppDatabase;
 
 /**
- * Created by Ankush Grover(ankush.grover@finoit.co.in) on 23/7/18.
+ * Created by Ankush Grover(ankushgrover02@gmail.com) on 23/7/18.
  */
 public class App extends Application {
 
@@ -22,6 +23,8 @@ public class App extends Application {
         super.onCreate();
 
         instance = this;
+
+        database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "image-search").build();
     }
 
     public AppDatabase getDatabase() {

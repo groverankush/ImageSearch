@@ -23,6 +23,8 @@ public class Photos {
     @Expose
     private List<Photo> photo = null;
 
+    private int lastPhotoId;
+
     public Integer getPage() {
         return page;
     }
@@ -63,4 +65,11 @@ public class Photos {
         this.photo = photo;
     }
 
+    public int getLastPhotoId() {
+        return lastPhotoId;
+    }
+
+    public void setLastPhotoId(int lastPhotoId) {
+        this.lastPhotoId = lastPhotoId;
+    }
 }

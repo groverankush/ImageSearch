@@ -1,10 +1,32 @@
 package com.ankushgrover.imagesearch.utils;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import java.util.Locale;
 
 public class Utils {
+
+
+    /**
+     * Method to format search term so that it can be queried from database.
+     *
+     * @param searchTerm
+     * @return
+     */
+    public static String formatSearchTermForDb(@NonNull String searchTerm) {
+        return String.format(Locale.ENGLISH, "%%%s%%", searchTerm.toLowerCase());
+    }
+
+    /**
+     * Method to format search term so that it can be queried from network.
+     *
+     * @param searchTerm
+     * @return
+     */
+    public static String formatSearchTermForNetwork(@NonNull String searchTerm) {
+        return searchTerm.toLowerCase();
+    }
 
     /**
      * Method to create Poster path.

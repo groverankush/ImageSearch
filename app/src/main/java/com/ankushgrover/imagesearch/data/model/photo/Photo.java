@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName;
 public class Photo {
 
     @PrimaryKey
-    int _id;
+    private int _id;
 
     @SerializedName("id")
     @Expose
@@ -114,4 +114,11 @@ public class Photo {
         this.isfamily = isfamily;
     }
 
+    public int get_id() {
+        return _id;
+    }
+
+    public void set_id(int _id) {
+        this._id = _id;
+    }
 }

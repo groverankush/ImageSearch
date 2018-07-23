@@ -46,7 +46,7 @@ public class DataManager {
         return retrofit.create(PhotosDataSource.class);
     }
 
-    public PhotosRepository getMoviesRepository() {
+    public PhotosRepository getPhotosRepository() {
         return repository;
     }
 

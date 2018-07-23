@@ -1,5 +1,11 @@
 package com.ankushgrover.imagesearch.data.source;
 
+import android.support.annotation.NonNull;
+
+import com.ankushgrover.imagesearch.data.model.photo.Photos;
+
+import io.reactivex.Single;
+
 public interface DataContract {
 
     interface PhotosContract {
@@ -7,10 +13,18 @@ public interface DataContract {
         /**
          * Method to fetch photos from db.
          *
-         * @param lastId:     Last known id of the photo.
          * @param searchTerm: The search term for which photos are required.
          */
-        void fetchPhotos(int lastId, String searchTerm);
+        Single<Photos> fetchPhotosFromDb(@NonNull String searchTerm);
+
+        /**
+         * Method to search photos from API.
+         *
+         * @param searchTerm: The search term for which photos are required.
+         * @param page:       Page number to be searched.
+         * @return
+         */
+        Single<Photos> fetchPhotosFromNetwork(@NonNull String searchTerm, int page);
 
     }
 

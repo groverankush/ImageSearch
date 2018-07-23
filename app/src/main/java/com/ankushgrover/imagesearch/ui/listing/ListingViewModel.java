@@ -17,7 +17,7 @@ public class ListingViewModel extends ViewModel {
     private List<Photo> photos;
     private MutableLiveData<Boolean> isLoading;
 
-    public List<Photo>  getPhotos() {
+    public List<Photo> getPhotos() {
         if (photos == null)
             photos = new ArrayList<Photo>();
         return photos;

@@ -1,11 +1,16 @@
 package com.ankushgrover.imagesearch.ui.listing;
 
+import android.util.Log;
+
+import com.ankushgrover.imagesearch.R;
+import com.ankushgrover.imagesearch.data.model.photo.Photos;
 import com.ankushgrover.imagesearch.data.source.DataManager;
 import com.ankushgrover.imagesearch.utils.NetworkUtils;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -34,63 +39,78 @@ public class ListingPresenter implements ListingContract.Presenter {
             isLoading(false);
         }
 
-        /*if (!viewModel.getIsLoading().getValue()) {
-            if (Preferences.isFavouritesSelected()) {
-                fetchFavourites();
-                return true;
-            } else if (NetworkUtils.isConnectedToNetwork()) {
-                fetchPhotos();
+        if (!viewModel.getIsLoading().getValue()) {
+            isLoading(true);
+            if (NetworkUtils.isConnectedToNetwork()) {
+                Disposable disposable = dataManager.getPhotosRepository().fetchPhotosFromNetwork("", viewModel.getResult() == null ? 1 : viewModel.getResult().getPage() + 1)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Consumer<Photos>() {
+                            @Override
+                            public void accept(Photos photos) throws Exception {
+                                isLoading(false);
+                                viewModel.setResult(photos);
+                                viewModel.getPhotos().addAll(photos.getPhoto());
+                                checkPhotosListBeforeDisplay();
+                            }
+                        }, throwable -> {
+                            errorLog(throwable, R.string.general_error);
+                            isLoading(false);
+                        });
+                mDisposables.add(disposable);
                 return true;
             } else {
-                if (!Preferences.isFavouritesSelected()) {
-                    view.generalResponse(R.string.network_error);
-                    view.onError(R.string.network_error);
-                }
-
+                if (viewModel.getPhotos().size() > 0)
+                    return true;
+                isLoading(true);
+                Disposable disposable = dataManager.getPhotosRepository().fetchPhotosFromDb("")
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(networkResult -> {
+                            isLoading(false);
+                            viewModel.setResult(networkResult);
+                            viewModel.getPhotos().addAll(networkResult.getPhoto());
+                            checkPhotosListBeforeDisplay();
+                        }, throwable -> {
+                            errorLog(throwable, R.string.general_error);
+                            isLoading(false);
+                        });
+                mDisposables.add(disposable);
+                return true;
             }
-        }*/
+        }
         return false;
     }
 
-    private void fetchPhotos() {
 
-        /*if (viewModel.getPhotos().size() > 0)
-            return;
-        isLoading(true);
-        Disposable disposable = dataManager.getMoviesRepository().fetchFavouriteMovies()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(networkResult -> {
-                    isLoading(false);
-                    viewModel.setResult(networkResult);
-                    viewModel.getMovies().addAll(networkResult.getResults());
-                    checkMoviesListBeforeDisplay();
-                }, throwable -> {
-                    errorLog(throwable, R.string.msg_something_went_wrong, R.string.genereal_error);
-                    isLoading(false);
-                });
-        mDisposables.add(disposable);*/
+    private void checkPhotosListBeforeDisplay() {
+        if (viewModel.getPhotos().size() == 0)
+            view.onError(R.string.no_images);
+        else view.imagesAdded();
 
     }
 
     @Override
     public void subscribe() {
-
+        loadPhotos(false);
     }
 
     @Override
     public void unsubscribe() {
-
+        isLoading(false);
+        mDisposables.clear();
     }
 
     @Override
     public void errorLog(Throwable throwable, int generalResponse) {
-
+        Log.e(getTag(), throwable.getMessage());
+        view.generalResponse(generalResponse);
+        //view.onError(errorResponse);
     }
 
     @Override
     public String getTag() {
-        return null;
+        return ListingPresenter.class.getSimpleName();
     }
 
     private void isLoading(boolean isLoading) {
