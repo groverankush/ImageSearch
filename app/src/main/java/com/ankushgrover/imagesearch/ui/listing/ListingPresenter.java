@@ -34,7 +34,7 @@ public class ListingPresenter implements ListingContract.Presenter {
             isLoading(false);
         }
 
-        if (!viewModel.getIsLoading().getValue()) {
+        /*if (!viewModel.getIsLoading().getValue()) {
             if (Preferences.isFavouritesSelected()) {
                 fetchFavourites();
                 return true;
@@ -48,13 +48,13 @@ public class ListingPresenter implements ListingContract.Presenter {
                 }
 
             }
-        }
+        }*/
         return false;
     }
 
     private void fetchPhotos() {
 
-        if (viewModel.getPhotos().size() > 0)
+        /*if (viewModel.getPhotos().size() > 0)
             return;
         isLoading(true);
         Disposable disposable = dataManager.getMoviesRepository().fetchFavouriteMovies()
@@ -69,7 +69,7 @@ public class ListingPresenter implements ListingContract.Presenter {
                     errorLog(throwable, R.string.msg_something_went_wrong, R.string.genereal_error);
                     isLoading(false);
                 });
-        mDisposables.add(disposable);
+        mDisposables.add(disposable);*/
 
     }
 

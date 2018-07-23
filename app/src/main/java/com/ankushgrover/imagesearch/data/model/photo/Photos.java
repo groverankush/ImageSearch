@@ -1,9 +1,9 @@
-
 package com.ankushgrover.imagesearch.data.model.photo;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class Photos {
 

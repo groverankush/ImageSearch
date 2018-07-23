@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.ankushgrover.popularmovies.app.App;
 
 
 public class NetworkUtils {
@@ -17,7 +16,7 @@ public class NetworkUtils {
      */
     public static boolean isConnectedToNetwork() {
 
-        ConnectivityManager connectivity = (ConnectivityManager) App.getApplication()
+        /*ConnectivityManager connectivity = (ConnectivityManager) App.getApplication()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
 
         if (connectivity != null) {
@@ -30,6 +29,8 @@ public class NetworkUtils {
                 }
             }
         }
+        return false;*/
+
         return false;
     }
 }
