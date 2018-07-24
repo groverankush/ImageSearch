@@ -1,4 +1,4 @@
-package com.ankushgrover.imagesearch;
+package com.ankushgrover.imagesearch.app;
 
 import android.app.Application;
 import android.arch.persistence.room.Room;

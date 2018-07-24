@@ -12,7 +12,7 @@ public interface PhotosDataSource {
 
 
 
-    @GET("?method=flickr.photos.search&format=json&jsoncallback=1")
+    @GET("?method=flickr.photos.search&format=json&nojsoncallback=1")
     Single<PhotoResult> fetchPhotos(@Query("api_key") String apiKey,
                                     @Query("text") String searchTerm,
                                     @Query("page") int page);
@@ -22,6 +22,7 @@ public interface PhotosDataSource {
     
 
     //https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key={API_KEY}&text=Hello&format=json&nojsoncallback=1&page=10
+
 
     //https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}.jpg
 

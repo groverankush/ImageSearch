@@ -3,10 +3,22 @@ package com.ankushgrover.imagesearch.utils;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import com.ankushgrover.imagesearch.data.model.photo.Photo;
+
 import java.util.Locale;
 
 public class Utils {
 
+
+    public static String makeImageUrl(Photo photo) {
+
+        //https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}.jpg
+        return String.format(Locale.ENGLISH, "https://farm%d.staticflickr.com/%s/%s_%s.jpg",
+                photo.getFarm(),
+                photo.getServer(),
+                photo.getId(),
+                photo.getSecret());
+    }
 
     /**
      * Method to format search term so that it can be queried from database.

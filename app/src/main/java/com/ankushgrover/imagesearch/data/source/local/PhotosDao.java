@@ -8,6 +8,7 @@ import com.ankushgrover.imagesearch.data.model.photo.Photo;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 import static android.arch.persistence.room.OnConflictStrategy.REPLACE;

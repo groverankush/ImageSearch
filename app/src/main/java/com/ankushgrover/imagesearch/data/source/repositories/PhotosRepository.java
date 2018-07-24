@@ -3,12 +3,16 @@ package com.ankushgrover.imagesearch.data.source.repositories;
 import android.support.annotation.NonNull;
 
 import com.ankushgrover.imagesearch.BuildConfig;
+import com.ankushgrover.imagesearch.data.model.photo.Photo;
 import com.ankushgrover.imagesearch.data.model.photo.Photos;
 import com.ankushgrover.imagesearch.data.source.DataContract;
 import com.ankushgrover.imagesearch.data.source.local.AppDatabase;
 import com.ankushgrover.imagesearch.data.source.remote.PhotosDataSource;
 import com.ankushgrover.imagesearch.utils.Utils;
 
+import java.util.List;
+
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 /**
@@ -40,13 +44,18 @@ public class PhotosRepository implements DataContract.PhotosContract {
     public Single<Photos> fetchPhotosFromNetwork(@NonNull String searchTerm, int page) {
 
         return remoteDataSource.fetchPhotos(BuildConfig.API_KEY,
-                Utils.formatSearchTermForNetwork(searchTerm),
-                page)
+                Utils.formatSearchTermForNetwork(searchTerm), page)
                 .map(photoResult -> {
                     if (photoResult.getStat().equals("ok")) {
-                        database.photosDao().insertPhotos(photoResult.getPhotos().getPhoto());
                         return photoResult.getPhotos();
                     } else throw new Exception("Unable to fetch data from servers.");
                 });
     }
+
+    @Override
+    public Completable savePhotosListToDb(List<Photo> photos) {
+        return Completable.fromAction(() -> database.photosDao().insertPhotos(photos));
+    }
+
+
 }

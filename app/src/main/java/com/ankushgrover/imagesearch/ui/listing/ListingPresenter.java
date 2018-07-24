@@ -1,16 +1,15 @@
 package com.ankushgrover.imagesearch.ui.listing;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.ankushgrover.imagesearch.R;
-import com.ankushgrover.imagesearch.data.model.photo.Photos;
 import com.ankushgrover.imagesearch.data.source.DataManager;
 import com.ankushgrover.imagesearch.utils.NetworkUtils;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -31,7 +30,7 @@ public class ListingPresenter implements ListingContract.Presenter {
     }
 
     @Override
-    public boolean loadPhotos(boolean force) {
+    public boolean loadPhotos(boolean force, @NonNull String searchTerm) {
         if (force) {
             viewModel.getPhotos().clear();
             viewModel.setResult(null);
@@ -42,17 +41,25 @@ public class ListingPresenter implements ListingContract.Presenter {
         if (!viewModel.getIsLoading().getValue()) {
             isLoading(true);
             if (NetworkUtils.isConnectedToNetwork()) {
-                Disposable disposable = dataManager.getPhotosRepository().fetchPhotosFromNetwork("", viewModel.getResult() == null ? 1 : viewModel.getResult().getPage() + 1)
+                Disposable disposable = dataManager.getPhotosRepository().fetchPhotosFromNetwork(searchTerm, viewModel.getResult() == null ? 1 : viewModel.getResult().getPage() + 1)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Consumer<Photos>() {
-                            @Override
-                            public void accept(Photos photos) throws Exception {
-                                isLoading(false);
-                                viewModel.setResult(photos);
-                                viewModel.getPhotos().addAll(photos.getPhoto());
-                                checkPhotosListBeforeDisplay();
-                            }
+                        .subscribe(photos -> {
+
+                            dataManager.getPhotosRepository().savePhotosListToDb(photos.getPhoto())
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(() -> {
+                                        isLoading(false);
+                                        viewModel.setResult(photos);
+                                        viewModel.getPhotos().addAll(photos.getPhoto());
+                                        checkPhotosListBeforeDisplay();
+                                    }, throwable -> {
+                                        errorLog(throwable, R.string.general_error);
+                                        isLoading(false);
+                                    });
+
+
                         }, throwable -> {
                             errorLog(throwable, R.string.general_error);
                             isLoading(false);
@@ -63,7 +70,7 @@ public class ListingPresenter implements ListingContract.Presenter {
                 if (viewModel.getPhotos().size() > 0)
                     return true;
                 isLoading(true);
-                Disposable disposable = dataManager.getPhotosRepository().fetchPhotosFromDb("")
+                Disposable disposable = dataManager.getPhotosRepository().fetchPhotosFromDb(searchTerm)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(networkResult -> {
@@ -92,7 +99,6 @@ public class ListingPresenter implements ListingContract.Presenter {
 
     @Override
     public void subscribe() {
-        loadPhotos(false);
     }
 
     @Override

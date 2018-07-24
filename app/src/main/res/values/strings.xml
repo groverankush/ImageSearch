@@ -2,4 +2,10 @@
     <string name="app_name">ImageSearch</string>
     <string name="no_images">No images to show!</string>
     <string name="general_error">Something went wrong!</string>
+    <string name="columns_2">2 Columns</string>
+    <string name="columns_3">3 Columns</string>
+    <string name="columns_4">4 Columns</string>
+    <string name="search_image">Search Image</string>
+
+
 </resources>
