@@ -11,7 +11,7 @@ public interface BasePresenter {
 
     void unsubscribe();
 
-    void errorLog(Throwable throwable, @StringRes int generalResponse);
+    void errorLog(Throwable throwable, @StringRes int generalResponse, @StringRes int errorResponse);
 
     String getTag();
 

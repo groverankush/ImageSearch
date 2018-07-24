@@ -5,11 +5,12 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ankushgrover.imagesearch.R;
 import com.ankushgrover.imagesearch.architecture.BaseActivity;
@@ -24,6 +25,7 @@ public class ListingActivity extends BaseActivity implements ListingContract.Vie
     private RecyclerView recycler;
 
     private SwipeRefreshLayout swipe;
+    private GridLayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +42,9 @@ public class ListingActivity extends BaseActivity implements ListingContract.Vie
 
     private void initAdapter() {
         adapter = new ListingAdapter(this, model.getPhotos());
-        GridLayoutManager manager = new GridLayoutManager(this, 2);
+        layoutManager = new GridLayoutManager(this, 2);
         adapter.setRecyclerView(recycler);
-        recycler.setLayoutManager(manager);
+        recycler.setLayoutManager(layoutManager);
         /*adapter.setOnItemCLickListener(position -> {
             Bundle bundle = new Bundle();
             bundle.putParcelable(DetailsActivity.MOVIE_DETAIL, model.getMovies().get(position));
@@ -56,10 +58,7 @@ public class ListingActivity extends BaseActivity implements ListingContract.Vie
         swipe = findViewById(R.id.swipe);
         model.getIsLoading().observe(this, aBoolean -> swipe.setRefreshing(aBoolean));
 
-        swipe.setOnRefreshListener(() -> {
-            //TODO Search term check
-            //presenter.loadPhotos(true)
-        });
+        swipe.setEnabled(false);
     }
 
     @Override
@@ -67,12 +66,20 @@ public class ListingActivity extends BaseActivity implements ListingContract.Vie
         getMenuInflater().inflate(R.menu.main, menu);
 
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setOnCloseListener(() -> {
+            model.setSearchTerm("");
+            return false;
+        });
+
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchView.clearFocus();
-                presenter.loadPhotos(true, query);
+                model.setSearchTerm(query);
+                if (!query.isEmpty()) {
+                    presenter.loadPhotos(true);
+                }
                 return true;
             }
 
@@ -89,31 +96,52 @@ public class ListingActivity extends BaseActivity implements ListingContract.Vie
 
         switch (item.getItemId()) {
             case R.id.action_two:
+                setLayoutManager(2);
                 return true;
 
             case R.id.action_three:
+                setLayoutManager(3);
                 return true;
 
             case R.id.action_four:
+                setLayoutManager(4);
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void imagesAdded() {
-        Log.d("as", model.getPhotos().size() + "");
+    /**
+     * Method to set appropriate layout manager
+     *
+     * @param columnCount
+     */
+    private void setLayoutManager(int columnCount) {
+        int visiblePosition = layoutManager.findFirstVisibleItemPosition();
+        layoutManager = new GridLayoutManager(this, columnCount);
+        recycler.setLayoutManager(layoutManager);
+        recycler.scrollToPosition(visiblePosition);
     }
 
     @Override
-    public boolean fetchMoreMovies() {
-        return false;
+    public void imagesAdded() {
+        swipe.setRefreshing(false);
+        errorTV.setVisibility(View.GONE);
+        recycler.setVisibility(View.VISIBLE);
+
+        adapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public boolean fetchMoreImages() {
+        return presenter.loadPhotos(false);
+
     }
 
     @Override
     public void generalResponse(int message) {
-
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

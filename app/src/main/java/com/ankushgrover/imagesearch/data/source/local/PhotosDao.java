@@ -8,9 +8,9 @@ import com.ankushgrover.imagesearch.data.model.photo.Photo;
 
 import java.util.List;
 
-import io.reactivex.Completable;
 import io.reactivex.Single;
 
+import static android.arch.persistence.room.OnConflictStrategy.IGNORE;
 import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
 /**
@@ -20,11 +20,11 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 public interface PhotosDao {
 
 
-    @Insert(onConflict = REPLACE)
+    @Insert(onConflict = IGNORE)
     void insertPhotos(List<Photo> photos);
 
 
-    @Query("Select * from Photo where lower(title) like :searchTerm")
-    Single<List<Photo>> fetchPhotos(String searchTerm);
+    @Query("Select * from Photo where search_term_id = :searchTermId")
+    Single<List<Photo>> fetchPhotos(int searchTermId);
 
 }

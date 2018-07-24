@@ -16,6 +16,7 @@ public class ListingViewModel extends ViewModel {
     private Photos result;
     private List<Photo> photos;
     private MutableLiveData<Boolean> isLoading;
+    private String searchTerm;
 
     public List<Photo> getPhotos() {
         if (photos == null)
@@ -40,4 +41,11 @@ public class ListingViewModel extends ViewModel {
         return isLoading;
     }
 
+    public String getSearchTerm() {
+        return searchTerm;
+    }
+
+    public void setSearchTerm(String searchTerm) {
+        this.searchTerm = searchTerm;
+    }
 }

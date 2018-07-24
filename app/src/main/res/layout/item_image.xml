@@ -3,4 +3,5 @@
     android:id="@+id/iv_thumb"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/margin_small" />
+    android:layout_margin="@dimen/margin_normal"
+    android:scaleType="centerCrop" />

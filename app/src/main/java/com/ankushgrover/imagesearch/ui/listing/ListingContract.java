@@ -1,7 +1,5 @@
 package com.ankushgrover.imagesearch.ui.listing;
 
-import android.support.annotation.NonNull;
-
 import com.ankushgrover.imagesearch.architecture.BasePresenter;
 import com.ankushgrover.imagesearch.architecture.BaseView;
 
@@ -14,7 +12,7 @@ public interface ListingContract {
 
         void imagesAdded();
 
-        boolean fetchMoreMovies();
+        boolean fetchMoreImages();
 
 
     }
@@ -24,11 +22,10 @@ public interface ListingContract {
         /**
          * Responsible for fetching images based on user preference and current requests.
          *
-         * @param force:      Forcibly fetch images. Ignore the previous requests.
-         * @param searchTerm: The text to be quried
+         * @param force: Forcibly fetch images. Ignore the previous requests.
          * @return
          */
-        boolean loadPhotos(boolean force, @NonNull String searchTerm);
+        boolean loadPhotos(boolean force);
     }
 
 }

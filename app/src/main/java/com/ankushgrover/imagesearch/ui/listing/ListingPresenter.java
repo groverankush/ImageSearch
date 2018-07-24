@@ -1,15 +1,23 @@
 package com.ankushgrover.imagesearch.ui.listing;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.ankushgrover.imagesearch.R;
+import com.ankushgrover.imagesearch.app.App;
+import com.ankushgrover.imagesearch.data.model.photo.Photo;
 import com.ankushgrover.imagesearch.data.source.DataManager;
 import com.ankushgrover.imagesearch.utils.NetworkUtils;
+
+import java.util.ArrayList;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -30,7 +38,8 @@ public class ListingPresenter implements ListingContract.Presenter {
     }
 
     @Override
-    public boolean loadPhotos(boolean force, @NonNull String searchTerm) {
+    public boolean loadPhotos(boolean force) {
+
         if (force) {
             viewModel.getPhotos().clear();
             viewModel.setResult(null);
@@ -39,29 +48,21 @@ public class ListingPresenter implements ListingContract.Presenter {
         }
 
         if (!viewModel.getIsLoading().getValue()) {
-            isLoading(true);
             if (NetworkUtils.isConnectedToNetwork()) {
-                Disposable disposable = dataManager.getPhotosRepository().fetchPhotosFromNetwork(searchTerm, viewModel.getResult() == null ? 1 : viewModel.getResult().getPage() + 1)
+                isLoading(true);
+
+                Disposable disposable = dataManager.getPhotosRepository().fetchPhotosFromNetwork(viewModel.getSearchTerm(), viewModel.getResult() == null ? 1 : viewModel.getResult().getPage() + 1)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(photos -> {
 
-                            dataManager.getPhotosRepository().savePhotosListToDb(photos.getPhoto())
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(() -> {
-                                        isLoading(false);
-                                        viewModel.setResult(photos);
-                                        viewModel.getPhotos().addAll(photos.getPhoto());
-                                        checkPhotosListBeforeDisplay();
-                                    }, throwable -> {
-                                        errorLog(throwable, R.string.general_error);
-                                        isLoading(false);
-                                    });
-
+                            isLoading(false);
+                            viewModel.setResult(photos);
+                            viewModel.getPhotos().addAll(photos.getPhoto());
+                            checkPhotosListBeforeDisplay();
 
                         }, throwable -> {
-                            errorLog(throwable, R.string.general_error);
+                            errorLog(throwable, R.string.general_error, -1);
                             isLoading(false);
                         });
                 mDisposables.add(disposable);
@@ -70,7 +71,7 @@ public class ListingPresenter implements ListingContract.Presenter {
                 if (viewModel.getPhotos().size() > 0)
                     return true;
                 isLoading(true);
-                Disposable disposable = dataManager.getPhotosRepository().fetchPhotosFromDb(searchTerm)
+                Disposable disposable = dataManager.getPhotosRepository().fetchPhotosFromDb(viewModel.getSearchTerm())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(networkResult -> {
@@ -79,7 +80,7 @@ public class ListingPresenter implements ListingContract.Presenter {
                             viewModel.getPhotos().addAll(networkResult.getPhoto());
                             checkPhotosListBeforeDisplay();
                         }, throwable -> {
-                            errorLog(throwable, R.string.general_error);
+                            errorLog(throwable, R.string.general_error, -1);
                             isLoading(false);
                         });
                 mDisposables.add(disposable);
@@ -108,7 +109,7 @@ public class ListingPresenter implements ListingContract.Presenter {
     }
 
     @Override
-    public void errorLog(Throwable throwable, int generalResponse) {
+    public void errorLog(Throwable throwable, int generalResponse, @StringRes int errorResponse) {
         Log.e(getTag(), throwable.getMessage());
         view.generalResponse(generalResponse);
         //view.onError(errorResponse);

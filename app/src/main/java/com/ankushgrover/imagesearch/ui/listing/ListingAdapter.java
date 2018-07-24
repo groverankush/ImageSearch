@@ -11,6 +11,7 @@ import com.ankushgrover.imagesearch.R;
 import com.ankushgrover.imagesearch.app.GlideApp;
 import com.ankushgrover.imagesearch.data.model.photo.Photo;
 import com.ankushgrover.imagesearch.utils.Utils;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
@@ -47,13 +48,14 @@ public class ListingAdapter extends RecyclerBaseAdapter {
                     .load(Utils.makeImageUrl(photos.get(position)))
                     .centerCrop()
                     .placeholder(R.drawable.placeholder_portrait)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.thumb);
             }
     }
 
     @Override
     public int getTotalItemCount() {
-        return 0;
+        return this.photos.size();
     }
 
     @Override
@@ -63,7 +65,7 @@ public class ListingAdapter extends RecyclerBaseAdapter {
 
     @Override
     public boolean requireNext() {
-        return false;
+        return listingView.fetchMoreImages();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

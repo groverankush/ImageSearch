@@ -7,8 +7,8 @@
     android:background="@android:color/transparent">
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:layout_width="match_parent"
         android:id="@+id/swipe"
+        android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
@@ -37,8 +37,9 @@
         android:gravity="center"
         android:textColor="@android:color/black"
         android:textSize="@dimen/text_size_normal_3"
-        android:visibility="gone"
+        android:visibility="visible"
         tools:text="Error Text"
+        android:text="@string/search_images"
         tools:visibility="visible" />
 
 

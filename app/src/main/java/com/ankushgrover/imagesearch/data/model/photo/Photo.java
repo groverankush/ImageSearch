@@ -1,18 +1,25 @@
 package com.ankushgrover.imagesearch.data.model.photo;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
+import com.ankushgrover.imagesearch.data.model.photosearchmapping.PhotoSearchMap;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-@Entity(indices = {@Index(value = "id", unique = true)})
+import static android.arch.persistence.room.ForeignKey.CASCADE;
+
+@Entity(indices = {@Index(value = "search_term_id")  ,@Index(value = {"id", "search_term_id"}, unique = true)}, foreignKeys = @ForeignKey(entity = PhotoSearchMap.class, parentColumns = "id", childColumns = "search_term_id", onDelete = CASCADE))
 public class Photo {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     private int _id;
+
+    @ColumnInfo(name = "search_term_id")
+    private long searchTermId;
 
     @SerializedName("id")
     @Expose
@@ -41,6 +48,11 @@ public class Photo {
     @SerializedName("isfamily")
     @Expose
     private Integer isfamily;
+
+    public Photo(String id, String secret) {
+        this.id = id;
+        this.secret = secret;
+    }
 
     public String getId() {
         return id;
@@ -120,5 +132,13 @@ public class Photo {
 
     public void set_id(int _id) {
         this._id = _id;
+    }
+
+    public long getSearchTermId() {
+        return searchTermId;
+    }
+
+    public void setSearchTermId(long searchTermId) {
+        this.searchTermId = searchTermId;
     }
 }
