@@ -17,6 +17,7 @@ public class ListingViewModel extends ViewModel {
     private List<Photo> photos;
     private MutableLiveData<Boolean> isLoading;
     private String searchTerm;
+    private int selectedItemPosition;
 
     public List<Photo> getPhotos() {
         if (photos == null)
@@ -47,5 +48,13 @@ public class ListingViewModel extends ViewModel {
 
     public void setSearchTerm(String searchTerm) {
         this.searchTerm = searchTerm;
+    }
+
+    public int getSelectedItemPosition() {
+        return selectedItemPosition;
+    }
+
+    public void setSelectedItemPosition(int selectedItemPosition) {
+        this.selectedItemPosition = selectedItemPosition;
     }
 }

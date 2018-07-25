@@ -1,69 +1,84 @@
 package com.ankushgrover.imagesearch.ui.listing;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ankushgrover.imagesearch.R;
-import com.ankushgrover.imagesearch.architecture.BaseActivity;
 import com.ankushgrover.imagesearch.data.source.DataManager;
 
-public class ListingActivity extends BaseActivity implements ListingContract.View {
+/**
+ * Created by Ankush Grover(ankushgrover02@gmail.com) on 25/7/18.
+ */
+public class ListingFragment extends Fragment implements ListingContract.View {
 
     private ListingPresenter presenter;
     private ListingViewModel model;
     private ListingAdapter adapter;
+    private GridLayoutManager layoutManager;
     private TextView errorTV;
+    private SwipeRefreshLayout swipe;
     private RecyclerView recycler;
 
-    private SwipeRefreshLayout swipe;
-    private GridLayoutManager layoutManager;
+    public ListingFragment() {
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.layout_recycler, container, false);
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_recycler);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        model = ViewModelProviders.of(this).get(ListingViewModel.class);
         presenter = new ListingPresenter(DataManager.getInstance(), model, this);
 
-        initView();
+        initView(view);
         initAdapter();
-
+        setHasOptionsMenu(true);
     }
 
     private void initAdapter() {
-        adapter = new ListingAdapter(this, model.getPhotos());
-        layoutManager = new GridLayoutManager(this, 2);
+        adapter = new ListingAdapter(this, model.getPhotos(), this);
+        layoutManager = new GridLayoutManager(getActivity(), 2);
         adapter.setRecyclerView(recycler);
         recycler.setLayoutManager(layoutManager);
-        /*adapter.setOnItemCLickListener(position -> {
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(DetailsActivity.MOVIE_DETAIL, model.getMovies().get(position));
-            switchActivity(DetailsActivity.class, bundle);
-        });*/
+        adapter.setOnItemCLickListener(position -> model.setSelectedItemPosition(position));
     }
 
-    private void initView() {
-        errorTV = findViewById(R.id.tv_error);
-        recycler = findViewById(R.id.recycler);
-        swipe = findViewById(R.id.swipe);
+    private void initView(View view) {
+        errorTV = view.findViewById(R.id.tv_error);
+        recycler = view.findViewById(R.id.recycler);
+        swipe = view.findViewById(R.id.swipe);
         model.getIsLoading().observe(this, aBoolean -> swipe.setRefreshing(aBoolean));
 
         swipe.setEnabled(false);
     }
 
+    public void setViewModel(ListingViewModel model) {
+
+        this.model = model;
+    }
+
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
 
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setOnCloseListener(() -> {
@@ -88,7 +103,7 @@ public class ListingActivity extends BaseActivity implements ListingContract.Vie
                 return false;
             }
         });
-        return super.onCreateOptionsMenu(menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -118,7 +133,7 @@ public class ListingActivity extends BaseActivity implements ListingContract.Vie
      */
     private void setLayoutManager(int columnCount) {
         int visiblePosition = layoutManager.findFirstVisibleItemPosition();
-        layoutManager = new GridLayoutManager(this, columnCount);
+        layoutManager = new GridLayoutManager(getActivity(), columnCount);
         recycler.setLayoutManager(layoutManager);
         recycler.scrollToPosition(visiblePosition);
     }
@@ -141,7 +156,7 @@ public class ListingActivity extends BaseActivity implements ListingContract.Vie
 
     @Override
     public void generalResponse(int message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

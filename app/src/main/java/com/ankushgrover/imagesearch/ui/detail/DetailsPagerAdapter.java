@@ -21,7 +21,10 @@ public class DetailsPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int i) {
-        return null;
+        ImageFragment fragment = new ImageFragment();
+        fragment.setPhoto(photos.get(i));
+
+        return fragment;
     }
 
     @Override

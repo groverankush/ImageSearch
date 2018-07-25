@@ -1,6 +1,6 @@
 package com.ankushgrover.imagesearch.ui.listing;
 
-import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import com.ankushgrover.imagesearch.R;
 import com.ankushgrover.imagesearch.app.GlideApp;
 import com.ankushgrover.imagesearch.data.model.photo.Photo;
+import com.ankushgrover.imagesearch.ui.detail.DetailPagerFragment;
+import com.ankushgrover.imagesearch.ui.detail.DetailsFragment;
 import com.ankushgrover.imagesearch.utils.Utils;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -21,21 +23,21 @@ import java.util.List;
 public class ListingAdapter extends RecyclerBaseAdapter {
 
     private String TAG = ListingAdapter.class.getSimpleName();
-    private Context context;
+    private Fragment fragment;
     private List<Photo> photos;
     private ListingContract.View listingView;
 
-    public ListingAdapter(Context context, List<Photo> photos) {
-        super(context, -1);
+    public ListingAdapter(Fragment fragment, List<Photo> photos, ListingContract.View view) {
+        super(fragment.getActivity(), -1);
 
-        this.context = context;
+        this.fragment = fragment;
         this.photos = photos;
-        this.listingView = (ListingContract.View) context;
+        this.listingView = view;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateItemViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.item_image, parent, false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_image, parent, false));
     }
 
     @Override
@@ -44,13 +46,15 @@ public class ListingAdapter extends RecyclerBaseAdapter {
             ViewHolder holder = (ViewHolder) viewHolder;
 
             GlideApp
-                    .with(context)
+                    .with(fragment.getActivity())
                     .load(Utils.makeImageUrl(photos.get(position)))
                     .centerCrop()
                     .placeholder(R.drawable.placeholder_portrait)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.thumb);
-            }
+            holder.thumb.setTransitionName(photos.get(position).getId());
+
+        }
     }
 
     @Override
@@ -77,7 +81,16 @@ public class ListingAdapter extends RecyclerBaseAdapter {
 
             thumb = itemView.findViewById(R.id.iv_thumb);
 
-            itemView.setOnClickListener(v -> onItemCLicked(getAdapterPosition()));
+            itemView.setOnClickListener(v -> {
+                onItemCLicked(getAdapterPosition());
+                fragment.getFragmentManager()
+                        .beginTransaction()
+                        .setReorderingAllowed(true) // Optimize for shared element transition
+                        .addSharedElement(thumb, thumb.getTransitionName())
+                        .replace(R.id.container, new DetailPagerFragment(), DetailsFragment.class.getSimpleName())
+                        .addToBackStack(null)
+                        .commit();
+            });
 
         }
     }
