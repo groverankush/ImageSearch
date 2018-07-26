@@ -5,6 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.ankushgrover.imagesearch.data.model.photosearchmapping.PhotoSearchMap;
 import com.google.gson.annotations.Expose;
@@ -13,7 +15,7 @@ import com.google.gson.annotations.SerializedName;
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(indices = {@Index(value = "search_term_id")  ,@Index(value = {"id", "search_term_id"}, unique = true)}, foreignKeys = @ForeignKey(entity = PhotoSearchMap.class, parentColumns = "id", childColumns = "search_term_id", onDelete = CASCADE))
-public class Photo {
+public class Photo implements Parcelable {
 
     @PrimaryKey(autoGenerate = true)
     private int _id;
@@ -53,6 +55,48 @@ public class Photo {
         this.id = id;
         this.secret = secret;
     }
+
+    protected Photo(Parcel in) {
+        _id = in.readInt();
+        searchTermId = in.readLong();
+        id = in.readString();
+        owner = in.readString();
+        secret = in.readString();
+        server = in.readString();
+        if (in.readByte() == 0) {
+            farm = null;
+        } else {
+            farm = in.readInt();
+        }
+        title = in.readString();
+        if (in.readByte() == 0) {
+            ispublic = null;
+        } else {
+            ispublic = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            isfriend = null;
+        } else {
+            isfriend = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            isfamily = null;
+        } else {
+            isfamily = in.readInt();
+        }
+    }
+
+    public static final Creator<Photo> CREATOR = new Creator<Photo>() {
+        @Override
+        public Photo createFromParcel(Parcel in) {
+            return new Photo(in);
+        }
+
+        @Override
+        public Photo[] newArray(int size) {
+            return new Photo[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -140,5 +184,45 @@ public class Photo {
 
     public void setSearchTermId(long searchTermId) {
         this.searchTermId = searchTermId;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(_id);
+        parcel.writeLong(searchTermId);
+        parcel.writeString(id);
+        parcel.writeString(owner);
+        parcel.writeString(secret);
+        parcel.writeString(server);
+        if (farm == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(farm);
+        }
+        parcel.writeString(title);
+        if (ispublic == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(ispublic);
+        }
+        if (isfriend == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(isfriend);
+        }
+        if (isfamily == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(isfamily);
+        }
     }
 }

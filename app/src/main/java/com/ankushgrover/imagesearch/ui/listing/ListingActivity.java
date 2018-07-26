@@ -14,7 +14,11 @@ import android.widget.Toast;
 
 import com.ankushgrover.imagesearch.R;
 import com.ankushgrover.imagesearch.architecture.BaseActivity;
+import com.ankushgrover.imagesearch.data.model.photo.Photo;
 import com.ankushgrover.imagesearch.data.source.DataManager;
+import com.ankushgrover.imagesearch.ui.detail.DetailsActivity;
+
+import java.util.ArrayList;
 
 public class ListingActivity extends BaseActivity implements ListingContract.View {
 
@@ -45,11 +49,12 @@ public class ListingActivity extends BaseActivity implements ListingContract.Vie
         layoutManager = new GridLayoutManager(this, 2);
         adapter.setRecyclerView(recycler);
         recycler.setLayoutManager(layoutManager);
-        /*adapter.setOnItemCLickListener(position -> {
+        adapter.setOnItemCLickListener(position -> {
             Bundle bundle = new Bundle();
-            bundle.putParcelable(DetailsActivity.MOVIE_DETAIL, model.getMovies().get(position));
+            bundle.putParcelableArrayList(DetailsActivity.PHOTOS, new ArrayList<>(model.getPhotos()));
+            bundle.putInt(DetailsActivity.SELECTED_PHOTO_INDEX, position);
             switchActivity(DetailsActivity.class, bundle);
-        });*/
+        });
     }
 
     private void initView() {
