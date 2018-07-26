@@ -66,7 +66,7 @@ public class ListingFragment extends Fragment implements ListingContract.View {
 
     private void initAdapter() {
         adapter = new ListingAdapter(this, model, this);
-        layoutManager = new GridLayoutManager(getActivity(), 2);
+        layoutManager = new GridLayoutManager(getActivity(), model.getViewModelColumnCount());
         adapter.setRecyclerView(recycler);
         recycler.setLayoutManager(layoutManager);
         //adapter.setOnItemCLickListener(position -> model.setSelectedItemPosition(position));
@@ -204,6 +204,7 @@ public class ListingFragment extends Fragment implements ListingContract.View {
         layoutManager = new GridLayoutManager(getActivity(), columnCount);
         recycler.setLayoutManager(layoutManager);
         recycler.scrollToPosition(visiblePosition);
+        model.setViewModelColumnCount(columnCount);
     }
 
     @Override

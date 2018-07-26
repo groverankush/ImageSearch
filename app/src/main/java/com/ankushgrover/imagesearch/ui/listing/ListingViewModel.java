@@ -18,6 +18,7 @@ public class ListingViewModel extends ViewModel {
     private MutableLiveData<Boolean> isLoading;
     private String searchTerm;
     private int selectedItemPosition;
+    private int viewModelColumnCount = 2;
 
     public List<Photo> getPhotos() {
         if (photos == null)
@@ -56,5 +57,13 @@ public class ListingViewModel extends ViewModel {
 
     public void setSelectedItemPosition(int selectedItemPosition) {
         this.selectedItemPosition = selectedItemPosition;
+    }
+
+    public int getViewModelColumnCount() {
+        return viewModelColumnCount;
+    }
+
+    public void setViewModelColumnCount(int viewModelColumnCount) {
+        this.viewModelColumnCount = viewModelColumnCount;
     }
 }
