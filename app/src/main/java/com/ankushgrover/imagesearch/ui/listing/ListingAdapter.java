@@ -50,7 +50,7 @@ public class ListingAdapter extends RecyclerBaseAdapter {
                     .placeholder(R.drawable.placeholder_portrait)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.thumb);
-            }
+        }
     }
 
     @Override
