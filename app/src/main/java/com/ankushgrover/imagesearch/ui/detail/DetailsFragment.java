@@ -38,19 +38,7 @@ public class DetailsFragment extends BaseFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         viewPager = (ViewPager) inflater.inflate(R.layout.fragment_details, container, false);
-        return viewPager;
-
-
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-
         viewPager.setAdapter(new DetailsPagerAdapter(getChildFragmentManager(), model.getPhotos()));
-        // Set the current position and add a listener that will update the selection coordinator when
-        // paging the images.
         viewPager.setCurrentItem(model.getSelectedItemPosition());
         viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
@@ -62,6 +50,8 @@ public class DetailsFragment extends BaseFragment {
         prepareSharedElementTransition();
 
         postponeEnterTransition();
+        return viewPager;
+
 
     }
 
