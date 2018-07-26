@@ -12,6 +12,7 @@ import android.widget.ImageView;
 
 import com.ankushgrover.imagesearch.R;
 import com.ankushgrover.imagesearch.app.GlideApp;
+import com.ankushgrover.imagesearch.app.GlideRequests;
 import com.ankushgrover.imagesearch.data.model.photo.Photo;
 import com.ankushgrover.imagesearch.ui.detail.DetailsFragment;
 import com.ankushgrover.imagesearch.utils.Utils;
@@ -26,12 +27,12 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Created by Ankush Grover(ankush.grover@finoit.co.in) on 24/7/18.
+ * Created by Ankush Grover(ankushgrover02@gmail.com) on 24/7/18.
  */
 public class ListingAdapter extends RecyclerBaseAdapter {
 
     static private ListingViewModel listingModel;
-    private final RequestManager requestManager;
+    private final GlideRequests requestManager;
     private final ViewHolderListenerImpl viewHolderListener;
     private String TAG = ListingAdapter.class.getSimpleName();
     private Fragment fragment;
@@ -60,18 +61,10 @@ public class ListingAdapter extends RecyclerBaseAdapter {
         if (viewHolder instanceof ViewHolder) {
             ViewHolder holder = (ViewHolder) viewHolder;
 
-            /*GlideApp
-                    .with(fragment.getActivity())
-                    .load(Utils.makeImageUrl(photos.get(position)))
-                    .centerCrop()
-                    .placeholder(R.drawable.placeholder_portrait)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(holder.thumb);
-            holder.thumb.setTransitionName(photos.get(position).getId());*/
-
 
             requestManager
                     .load(Utils.makeImageUrl(photos.get(position)))
+                    .placeholder(R.drawable.placeholder_portrait)
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model,
@@ -88,7 +81,6 @@ public class ListingAdapter extends RecyclerBaseAdapter {
                         }
                     })
                     .into(holder.thumb);
-            // Set the string value of the image resource as the unique transition name for the view.
             holder.thumb.setTransitionName(photos.get(position).getId());
 
         }
@@ -134,7 +126,6 @@ public class ListingAdapter extends RecyclerBaseAdapter {
 
         @Override
         public void onLoadCompleted(ImageView view, int position) {
-            // Call startPostponedEnterTransition only when the 'selected' image loading is completed.
             if (listingModel.getSelectedItemPosition() != position) {
                 return;
             }
@@ -146,11 +137,8 @@ public class ListingAdapter extends RecyclerBaseAdapter {
 
         @Override
         public void onItemClicked(View view, int position) {
-            // Update the position.
             listingModel.setSelectedItemPosition(position);
 
-            // Exclude the clicked card from the exit transition (e.g. the card will disappear immediately
-            // instead of fading out with the rest to prevent an overlapping animation of fade and move).
             ((TransitionSet) fragment.getExitTransition()).excludeTarget(view, true);
 
             ImageView transitioningView = view.findViewById(R.id.iv_thumb);
@@ -158,7 +146,7 @@ public class ListingAdapter extends RecyclerBaseAdapter {
             detailsFragment.setViewModel(listingModel);
             fragment.getFragmentManager()
                     .beginTransaction()
-                    .setReorderingAllowed(true) // Optimize for shared element transition
+                    .setReorderingAllowed(true)
                     .addSharedElement(transitioningView, transitioningView.getTransitionName())
                     .replace(R.id.container, detailsFragment, DetailsFragment.class
                             .getSimpleName())

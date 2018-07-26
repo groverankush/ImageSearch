@@ -95,20 +95,17 @@ public class ListingFragment extends Fragment implements ListingContract.View {
         setExitTransition(TransitionInflater.from(getContext())
                 .inflateTransition(R.transition.grid_exit_transition));
 
-        // A similar mapping is set at the ImagePagerFragment with a setEnterSharedElementCallback.
 
 
         setExitSharedElementCallback(
                 new SharedElementCallback() {
                     @Override
                     public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
-                        // Locate the ViewHolder for the clicked position.
                         RecyclerView.ViewHolder selectedViewHolder = recycler.findViewHolderForAdapterPosition(model.getSelectedItemPosition());
                         if (selectedViewHolder == null || selectedViewHolder.itemView == null)
                             return;
 
 
-                        // Map the first shared element name to the child ImageView.
                         sharedElements.put(names.get(0), selectedViewHolder.itemView.findViewById(R.id.iv_thumb));
                     }
                 });
@@ -133,8 +130,7 @@ public class ListingFragment extends Fragment implements ListingContract.View {
                 recycler.removeOnLayoutChangeListener(this);
                 final RecyclerView.LayoutManager layoutManager = recycler.getLayoutManager();
                 View viewAtPosition = layoutManager.findViewByPosition(model.getSelectedItemPosition());
-                // Scroll to position if the view for the current position is null (not currently part of
-                // layout manager children), or it's not completely visible.
+
                 if (viewAtPosition == null || layoutManager
                         .isViewPartiallyVisible(viewAtPosition, false, true)) {
                     recycler.post(() -> layoutManager.scrollToPosition(model.getSelectedItemPosition()));

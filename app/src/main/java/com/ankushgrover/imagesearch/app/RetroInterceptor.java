@@ -9,7 +9,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * Created by Ankush Grover(ankush.grover@finoit.co.in) on 24/7/18.
+ * Created by Ankush Grover(ankushgrover02@gmail.com) on 24/7/18.
  */
 public class RetroInterceptor implements Interceptor {
     @Override
